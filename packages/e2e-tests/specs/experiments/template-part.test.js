@@ -60,7 +60,7 @@ describe( 'Template Part', () => {
 
 			const frame = await page
 				.frames()
-				.find( ( f ) => f.name() === 'editor-content' );
+				.find( ( f ) => f.name() === 'editor-canvas' );
 
 			// Edit it.
 			await insertBlock( 'Paragraph', frame );

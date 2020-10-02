@@ -83,8 +83,8 @@ export const IFrame = ( {
 		<iframe
 			{ ...props }
 			ref={ setContentRef }
-			title={ __( 'Editor content' ) }
-			name="editor-content"
+			title={ __( 'Editor canvas' ) }
+			name="editor-canvas"
 			data-loaded={ !! contentRef }
 		>
 			<useKeyboardShortcut.WindowContext.Provider value={ win }>

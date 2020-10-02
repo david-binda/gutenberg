@@ -33,7 +33,7 @@ const visitSiteEditor = async () => {
 	);
 	const frame = await page
 		.frames()
-		.find( ( f ) => f.name() === 'editor-content' );
+		.find( ( f ) => f.name() === 'editor-canvas' );
 	// Waits for the template part to load...
 	await frame.waitForSelector(
 		'.wp-block[data-type="core/template-part"] .block-editor-block-list__layout'
@@ -184,7 +184,7 @@ describe( 'Multi-entity editor states', () => {
 
 		let frame = await page
 			.frames()
-			.find( ( f ) => f.name() === 'editor-content' );
+			.find( ( f ) => f.name() === 'editor-canvas' );
 
 		// Wait for blocks to load.
 		await frame.waitForSelector( '.wp-block' );
@@ -200,7 +200,7 @@ describe( 'Multi-entity editor states', () => {
 		);
 		frame = await page
 			.frames()
-			.find( ( f ) => f.name() === 'editor-content' );
+			.find( ( f ) => f.name() === 'editor-canvas' );
 		await frame.waitForSelector( '.wp-block' );
 		expect( await isEntityDirty( 'header' ) ).toBe( false );
 		expect( await isEntityDirty( 'front-page' ) ).toBe( false );
@@ -240,7 +240,7 @@ describe( 'Multi-entity editor states', () => {
 		it( 'should only dirty the parent entity when editing the parent', async () => {
 			const frame = await page
 				.frames()
-				.find( ( f ) => f.name() === 'editor-content' );
+				.find( ( f ) => f.name() === 'editor-canvas' );
 			// Clear selection so that the block is not added to the template part.
 			await insertBlock( 'Paragraph', frame );
 
@@ -258,7 +258,7 @@ describe( 'Multi-entity editor states', () => {
 			);
 			const frame = await page
 				.frames()
-				.find( ( f ) => f.name() === 'editor-content' );
+				.find( ( f ) => f.name() === 'editor-canvas' );
 			await frame.click(
 				'.wp-block[data-type="core/template-part"] .wp-block[data-type="core/paragraph"]'
 			);
@@ -275,7 +275,7 @@ describe( 'Multi-entity editor states', () => {
 			);
 			const frame = await page
 				.frames()
-				.find( ( f ) => f.name() === 'editor-content' );
+				.find( ( f ) => f.name() === 'editor-canvas' );
 			await frame.click(
 				'.wp-block[data-type="core/template-part"] .wp-block[data-type="core/template-part"] .wp-block[data-type="core/paragraph"]'
 			);

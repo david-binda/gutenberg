@@ -243,7 +243,7 @@ describe( 'Multi-entity save flow', () => {
 
 			const frame = await page
 				.frames()
-				.find( ( f ) => f.name() === 'editor-content' );
+				.find( ( f ) => f.name() === 'editor-canvas' );
 
 			// Insert a new template part placeholder.
 			await insertBlock( 'Template Part', frame );
