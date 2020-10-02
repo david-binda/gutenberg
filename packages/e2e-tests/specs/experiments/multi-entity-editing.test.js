@@ -28,8 +28,14 @@ const visitSiteEditor = async () => {
 		page: 'gutenberg-edit-site',
 	} ).slice( 1 );
 	await visitAdminPage( 'admin.php', query );
-	// Waits for the template part to load...
 	await page.waitForSelector(
+		'.edit-site-visual-editor[data-loaded="true"]'
+	);
+	const frame = await page
+		.frames()
+		.find( ( f ) => f.name() === 'editor-content' );
+	// Waits for the template part to load...
+	await frame.waitForSelector(
 		'.wp-block[data-type="core/template-part"] .block-editor-block-list__layout'
 	);
 };
@@ -61,8 +67,8 @@ const createTemplatePart = async (
 	await page.keyboard.type( templatePartName );
 };
 
-const editTemplatePart = async ( textToAdd, isNested = false ) => {
-	await page.click(
+const editTemplatePart = async ( textToAdd, isNested = false, p = page ) => {
+	await p.click(
 		`${
 			isNested
 				? '.wp-block[data-type="core/template-part"] .wp-block[data-type="core/template-part"]'
@@ -172,15 +178,30 @@ describe( 'Multi-entity editor states', () => {
 		const templatePartButton = await getTemplateDropdownElement( 'header' );
 		await templatePartButton.click();
 
+		await page.waitForSelector(
+			'.edit-site-visual-editor[data-loaded="true"]'
+		);
+
+		let frame = await page
+			.frames()
+			.find( ( f ) => f.name() === 'editor-content' );
+
 		// Wait for blocks to load.
-		await page.waitForSelector( '.wp-block' );
+		await frame.waitForSelector( '.wp-block' );
 		expect( await isEntityDirty( 'header' ) ).toBe( false );
 		expect( await isEntityDirty( 'front-page' ) ).toBe( false );
 
 		// Switch back and make sure it is still clean.
 		const templateButton = await getTemplateDropdownElement( 'front-page' );
 		await templateButton.click();
-		await page.waitForSelector( '.wp-block' );
+
+		await page.waitForSelector(
+			'.edit-site-visual-editor[data-loaded="true"]'
+		);
+		frame = await page
+			.frames()
+			.find( ( f ) => f.name() === 'editor-content' );
+		await frame.waitForSelector( '.wp-block' );
 		expect( await isEntityDirty( 'header' ) ).toBe( false );
 		expect( await isEntityDirty( 'front-page' ) ).toBe( false );
 
@@ -217,8 +238,11 @@ describe( 'Multi-entity editor states', () => {
 		} );
 
 		it( 'should only dirty the parent entity when editing the parent', async () => {
+			const frame = await page
+				.frames()
+				.find( ( f ) => f.name() === 'editor-content' );
 			// Clear selection so that the block is not added to the template part.
-			await insertBlock( 'Paragraph' );
+			await insertBlock( 'Paragraph', frame );
 
 			// Add changes to the main parent entity.
 			await page.keyboard.type( 'Test.' );
@@ -229,7 +253,13 @@ describe( 'Multi-entity editor states', () => {
 		} );
 
 		it( 'should only dirty the child when editing the child', async () => {
-			await page.click(
+			await page.waitForSelector(
+				'.edit-site-visual-editor[data-loaded="true"]'
+			);
+			const frame = await page
+				.frames()
+				.find( ( f ) => f.name() === 'editor-content' );
+			await frame.click(
 				'.wp-block[data-type="core/template-part"] .wp-block[data-type="core/paragraph"]'
 			);
 			await page.keyboard.type( 'Some more test words!' );
@@ -240,7 +270,13 @@ describe( 'Multi-entity editor states', () => {
 		} );
 
 		it( 'should only dirty the nested entity when editing the nested entity', async () => {
-			await page.click(
+			await page.waitForSelector(
+				'.edit-site-visual-editor[data-loaded="true"]'
+			);
+			const frame = await page
+				.frames()
+				.find( ( f ) => f.name() === 'editor-content' );
+			await frame.click(
 				'.wp-block[data-type="core/template-part"] .wp-block[data-type="core/template-part"] .wp-block[data-type="core/paragraph"]'
 			);
 			await page.keyboard.type( 'Nested test words!' );

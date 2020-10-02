@@ -241,8 +241,12 @@ describe( 'Multi-entity save flow', () => {
 			);
 			await demoTemplateButton.click();
 
+			const frame = await page
+				.frames()
+				.find( ( f ) => f.name() === 'editor-content' );
+
 			// Insert a new template part placeholder.
-			await insertBlock( 'Template Part' );
+			await insertBlock( 'Template Part', frame );
 
 			const enabledButton = await page.waitForSelector(
 				activeSaveSiteSelector

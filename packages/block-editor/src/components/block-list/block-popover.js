@@ -13,6 +13,7 @@ import { Popover } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useShortcut } from '@wordpress/keyboard-shortcuts';
 import { useViewportMatch } from '@wordpress/compose';
+import { getScrollContainer } from '@wordpress/dom';
 
 /**
  * Internal dependencies
@@ -101,12 +102,14 @@ function BlockPopover( {
 
 	let node = blockNodes[ clientId ];
 
-	if ( capturingClientId ) {
-		node = document.getElementById( 'block-' + capturingClientId );
-	}
-
 	if ( ! node ) {
 		return null;
+	}
+
+	const { ownerDocument } = node;
+
+	if ( capturingClientId ) {
+		node = ownerDocument.getElementById( 'block-' + capturingClientId );
 	}
 
 	let anchorRef = node;
@@ -141,6 +144,11 @@ function BlockPopover( {
 	const popoverPosition = showEmptyBlockSideInserter
 		? 'top left right'
 		: 'top right left';
+	const stickyEl = showEmptyBlockSideInserter
+		? undefined
+		: ownerDocument.defaultView.frameElement ||
+		  getScrollContainer( node ) ||
+		  ownerDocument.body;
 
 	return (
 		<Popover
@@ -150,7 +158,7 @@ function BlockPopover( {
 			focusOnMount={ false }
 			anchorRef={ anchorRef }
 			className="block-editor-block-list__block-popover"
-			__unstableSticky={ ! showEmptyBlockSideInserter }
+			__unstableSticky={ stickyEl }
 			__unstableSlotName="block-toolbar"
 			__unstableBoundaryParent
 			// Observe movement for block animations (especially horizontal).

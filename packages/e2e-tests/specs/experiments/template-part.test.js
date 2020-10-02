@@ -41,7 +41,9 @@ describe( 'Template Part', () => {
 					page: 'gutenberg-edit-site',
 				} ).slice( 1 )
 			);
-			await page.waitForSelector( '.edit-site-visual-editor' );
+			await page.waitForSelector(
+				'.edit-site-visual-editor[data-loaded="true"]'
+			);
 		} );
 
 		it( 'Should load customizations when in a template even if only the slug and theme attributes are set.', async () => {
@@ -52,8 +54,16 @@ describe( 'Template Part', () => {
 			);
 			await switchToHeaderTemplatePartButton.click();
 
+			await page.waitForSelector(
+				'.edit-site-visual-editor[data-loaded="true"]'
+			);
+
+			const frame = await page
+				.frames()
+				.find( ( f ) => f.name() === 'editor-content' );
+
 			// Edit it.
-			await insertBlock( 'Paragraph' );
+			await insertBlock( 'Paragraph', frame );
 			await page.keyboard.type( 'Header Template Part 123' );
 
 			// Save it.

@@ -52,7 +52,7 @@ describe( 'Site Editor Performance', () => {
 		while ( i-- ) {
 			const startTime = new Date();
 			await page.reload();
-			await page.waitForSelector( '.wp-block' );
+			await page.waitForSelector( '.edit-site-visual-editor' );
 			results.load.push( new Date() - startTime );
 		}
 
