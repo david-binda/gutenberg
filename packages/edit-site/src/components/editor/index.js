@@ -11,11 +11,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { EntityProvider } from '@wordpress/core-data';
-import {
-	BlockContextProvider,
-	BlockBreadcrumb,
-	__unstableEditorStyles as EditorStyles,
-} from '@wordpress/block-editor';
+import { BlockContextProvider, BlockBreadcrumb } from '@wordpress/block-editor';
 import {
 	FullscreenMode,
 	InterfaceSkeleton,
@@ -161,7 +157,6 @@ function Editor() {
 
 	return (
 		<>
-			<EditorStyles styles={ settings.styles } />
 			<FullscreenMode isActive={ isFullscreenActive } />
 			<UnsavedChangesWarning />
 			<SlotFillProvider>
