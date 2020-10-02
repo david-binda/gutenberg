@@ -20,7 +20,6 @@ import {
 	BlockSelectionClearer,
 	__experimentalUseResizeCanvas as useResizeCanvas,
 } from '@wordpress/block-editor';
-import { useKeyboardShortcut } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -37,13 +36,12 @@ export const IFrame = ( {
 	...props
 } ) => {
 	const [ contentRef, setContentRef ] = useState();
-	const win = contentRef && contentRef.contentWindow;
 	const doc = contentRef && contentRef.contentWindow.document;
 
 	useEffect( () => {
 		if ( doc ) {
 			doc.body.className = bodyClassName;
-			doc.body.style.margin = '0px';
+			doc.body.style.margin = '0';
 			doc.head.innerHTML = head;
 			doc.dir = document.dir;
 
@@ -53,14 +51,14 @@ export const IFrame = ( {
 				doc.head.appendChild( styleEl );
 			} );
 
-			[ ...document.styleSheets ].reduce( ( acc, styleSheet ) => {
+			// Search the document for stylesheets targetting the editor canvas.
+			Array.from( document.styleSheets ).reduce( ( acc, styleSheet ) => {
+				// May fail for external styles.
 				try {
 					const isMatch = [ ...styleSheet.cssRules ].find(
 						( { selectorText } ) => {
-							return (
-								selectorText.indexOf(
-									'.editor-styles-wrapper'
-								) !== -1
+							return selectorText.includes(
+								'.editor-styles-wrapper'
 							);
 						}
 					);
@@ -87,9 +85,7 @@ export const IFrame = ( {
 			name="editor-canvas"
 			data-loaded={ !! contentRef }
 		>
-			<useKeyboardShortcut.WindowContext.Provider value={ win }>
-				{ doc && createPortal( children, doc.body ) }
-			</useKeyboardShortcut.WindowContext.Provider>
+			{ doc && createPortal( children, doc.body ) }
 		</iframe>
 	);
 };
