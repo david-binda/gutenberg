@@ -51,9 +51,10 @@ function InsertionPointInserter( {
 			return;
 		}
 
+		const { ownerDocument } = ref.current;
 		const targetRect = target.getBoundingClientRect();
 		const isReverse = clientY < targetRect.top + targetRect.height / 2;
-		const blockNode = getBlockDOMNode( clientId );
+		const blockNode = getBlockDOMNode( clientId, ownerDocument );
 		const container = isReverse ? containerRef.current : blockNode;
 		const closest =
 			getClosestTabbable( blockNode, true, container ) || blockNode;
@@ -100,7 +101,8 @@ function InsertionPointPopover( {
 	containerRef,
 	showInsertionPoint,
 } ) {
-	const element = getBlockDOMNode( clientId );
+	const { ownerDocument } = containerRef.current;
+	const element = getBlockDOMNode( clientId, ownerDocument );
 
 	return (
 		<Popover

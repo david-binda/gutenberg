@@ -116,6 +116,7 @@ export const link = {
 					activeAttributes,
 					value,
 					onChange,
+					forwardedRef,
 				} = this.props;
 
 				return (
@@ -160,6 +161,7 @@ export const link = {
 								activeAttributes={ activeAttributes }
 								value={ value }
 								onChange={ onChange }
+								forwardedRef={ forwardedRef }
 							/>
 						) }
 					</>
